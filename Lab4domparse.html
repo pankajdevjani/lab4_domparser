@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Carservice</h2>
+<button type="button" onclick="loadXMLDoc()">Show the cars</button>
+<button type="button" onclick="addrow()">Add a row</button>
+<p>Note that there may be a few failure alerts before the success occurs</p>
+<div id="disp"></div>
+<p id=""out></p>
+<script>
+var b=0;
+var table;
+function loadXMLDoc() {       
+    var xmlfile;
+    if(window.XMLHttpRequest){xmlfile = new XMLHttpRequest();}      
+    else{xmlfile=new ActiveXObject("Microsoft.XMLHTTP");}                    
+    xmlfile.onreadystatechange = function() {                  /*function to do the actual load and display*/
+        if (this.readyState == 4 && this.status == 200) {    /*this function is needed to confirm active working connection*/
+            alert("SUCCESS");
+            myFunction(this);
+        }
+        else{alert("FAILURE")}
+    };
+    xmlfile.open("GET", "lab3.xml", true);
+    xmlfile.send();
+}
+function myFunction(xml) {
+    var x, i, xmlDoc;
+    xmlDoc = xml.responseXML;
+    x = xmlDoc.getElementsByTagName("car");
+    table="<table border='1px'><tr><th>CarID</th><th>OwnerID</th><th>ServiceID</th><th>Model</th><th>Year</th><th>LastService</th><th>FirstService</th></tr>";
+    for (i = 0; i< x.length; i++) {
+        b++;
+        table += "<tr id='row"+i+"'><td>" +
+        x[i].getElementsByTagName("carID")[0].childNodes[0].nodeValue +
+        "</td><td>" +
+        x[i].getElementsByTagName("ownerID")[0].childNodes[0].nodeValue +
+        "</td><td>" +
+        x[i].getElementsByTagName("serviceID")[0].childNodes[0].nodeValue +
+        "</td><td>" +
+        x[i].getElementsByTagName("model")[0].childNodes[0].nodeValue +
+        "</td><td>" +
+        x[i].getElementsByTagName("year")[0].childNodes[0].nodeValue +
+        "</td><td>" +
+        x[i].getElementsByTagName("lastservice")[0].childNodes[0].nodeValue +
+        "</td><td>" +
+        x[i].getElementsByTagName("nextservice")[0].childNodes[0].nodeValue +
+        "</td><td><input type='button' value='remove row' id="+i+" onclick=rowremove(id)></td>"+
+        "<td><input type='button' value='remove cell[1]' id="+i+" onclick=cellremove(id)></td>"+
+        "<td><input type='button' value='replace cell[6]' id="+i+" onclick=cellreplace(id)></td></tr>"
+    }
+    document.getElementById("disp").innerHTML = table;
+   
+}
+function rowremove(a){
+        document.getElementById("row"+a).remove();
+}
+function cellremove(a){
+        /*var removed = document.getElementById("row"+a).childNodes[1].remove();
+        var blank = " "
+        document.insertBefore(document.getElementById("row"+a).childNodes[1],blank)*/
+        document.getElementById("row"+a).childNodes[1].innerHTML= " ";
+        /*document.getElementById("out").innerHTML=removed;*/
+}
+function addrow(){
+    table+= "<tr id='row"+b+"'><td>"+b+"</td><td>"+b+"</td><td>"+b+"</td><td>model"+b+"</td><td>2006</td><td>NA</td><td>NA</td><td><input type='button' value='remove row' id="+b+" onclick=rowremove(id)></td>"+
+        "<td><input type='button' value='remove cell[1]' id="+b+" onclick=cellremove(id)></td>"+
+        "<td><input type='button' value='replace cell[6]' id="+b+" onclick=cellreplace(id)></td></tr>";
+    b++;
+    document.getElementById("disp").innerHTML = table;
+    
+}
+function cellreplace(a){
+    document.getElementById("row"+a).childNodes[6].innerHTML= "REPLACED";
+
+}
+</script>
+</body>
+</html>
